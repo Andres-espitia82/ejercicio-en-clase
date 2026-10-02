@@ -1,0 +1,84 @@
+LIQUIDACION.JAVA
+
+package com.institucion.simulador;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+@Service
+public class LiquidacionService {
+
+    @Value("${liquidacion.tarifa-base}")
+    private double tarifaBase;
+
+    @Value("${liquidacion.porcentaje-impuesto}")
+    private double porcentajeImpuesto;
+
+    // Método de cálculo
+    public double calcularTotal(double costoAdicional) {
+        double subtotal = tarifaBase + costoAdicional;
+        double impuesto = subtotal * porcentajeImpuesto;
+        return subtotal + impuesto;
+    }
+
+    public double getTarifaBase() {
+        return tarifaBase;
+    }
+
+    public double getPorcentajeImpuesto() {
+        return porcentajeImpuesto;
+    }
+}
+
+SIMULACION RUNNER
+
+package com.institucion.simulador;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.stereotype.Component;
+
+@Component
+public class SimuladorRunner implements CommandLineRunner {
+
+    @Autowired
+    private LiquidacionService liquidacionService;
+
+    @Override
+    public void run(String... args) throws Exception {
+        System.out.println("=================================================");
+        System.out.println("   SIMULADOR DE TARIFAS Y LIQUIDACION INSTITUCIONAL   ");
+        System.out.println("=================================================");
+        
+        double tarifaBase = liquidacionService.getTarifaBase();
+        double porcentajeImpuesto = liquidacionService.getPorcentajeImpuesto();
+        
+        double costoAdicional = 150.0; // Ejemplo de costo adicional
+        double totalLiquidado = liquidacionService.calcularTotal(costoAdicional);
+
+        System.out.println("Tarifa Base (desde properties): $" + tarifaBase);
+        System.out.println("Porcentaje Impuesto: " + (porcentajeImpuesto * 100) + "%");
+        System.out.println("Costo Adicional: $" + costoAdicional);
+        System.out.println("-------------------------------------------------");
+        System.out.println("TOTAL LIQUIDADO FINAL: $" + totalLiquidado);
+        System.out.println("=================================================");
+    }
+}
+
+SIMULADOR APLICATION
+
+package com.institucion.simulador;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class SimuladorApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(SimuladorApplication.class, args);
+	}
+
+}
+
+
